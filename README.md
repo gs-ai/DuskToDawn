@@ -1,4 +1,3 @@
-# filepath: /Users/mbaosint/Desktop/Projects/DuskToDawn/README.md
 # DuskToDawn Web Intelligence Crawler
 
 A sophisticated web intelligence gathering tool designed for OSINT investigations with stealth capabilities.
