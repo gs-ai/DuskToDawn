@@ -1,30 +1,51 @@
-# filepath: /Users/mbaosint/Desktop/Projects/DuskToDawn/README.md
-# DuskToDawn Web Intelligence Crawler
+# DuskToDawn
 
-A sophisticated web intelligence gathering tool designed for OSINT investigations with stealth capabilities.
+A stealth web intelligence crawler that collects and analyzes mentions of specific individuals across the internet. DuskToDawn uses advanced anonymity techniques through Tor integration to maintain operational security while gathering intelligence.
 
-## Setup
+## Features
 
-1. **Install Dependencies**
-   ```bash
+- **Dual Crawler Architecture**: Choose between standard and enhanced crawling capabilities
+- **Tor Integration**: All connections route through Tor for anonymity with automatic circuit rotation
+- **Anti-Detection Measures**: Advanced browser fingerprint manipulation and human-like behavior simulation
+- **Sentiment Analysis**: Automatic analysis of mentions and their context
+- **State Persistence**: Maintains crawler state between sessions
+- **Data Analysis Tools**: Visualize and export findings
+
+## Installation
+
+### Prerequisites
+
+- Python 3.7+
+- Tor service installed and running on default ports (9050/9051)
+
+### Setup
+
+1. Clone the repository
+   ```
+   git clone https://github.com/yourusername/DuskToDawn.git
+   cd DuskToDawn
+   ```
+
+2. Create and activate a virtual environment
+   ```
+   python -m venv reaperENV
+   source reaperENV/bin/activate  # On Windows: reaperENV\Scripts\activate
+   ```
+
+3. Install dependencies
+   ```
    pip install -r requirements.txt
    ```
 
-2. **Install and Configure Tor**
-   This crawler uses Tor for anonymity and IP rotation. Make sure to install and run Tor:
-
-   - **macOS**: `brew install tor` and `brew services start tor`
-   - **Linux**: `apt install tor` and `service tor start`
-   - **Windows**: Download Tor Browser and extract just the Tor service
-
-3. **Enable Tor ControlPort**
-   Edit your torrc file (usually in /etc/tor/torrc) and add:
+4. Ensure Tor is running
    ```
-   ControlPort 9051
-   CookieAuthentication 1
+   # Check Tor connectivity
+   python tor_manager.py --test
    ```
 
 ## Usage
+
+### Basic Usage
 
 Run the crawler with:
 

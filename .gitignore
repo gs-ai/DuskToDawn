@@ -1,31 +1,36 @@
-# Byte-compiled / optimized / DLL files
+# Python bytecode
 __pycache__/
 *.py[cod]
 *$py.class
 
-# Distribution / packaging
-dist/
-build/
-*.egg-info/
-
 # Virtual environments
+reaperENV/
 venv/
-env/
 ENV/
 
-# Crawler specific files
-*.pkl
-scraped_data/
-crawler_log.json
-crawler_detailed.log
+# Distribution / packaging
+*.egg-info/
+dist/
+build/
 
-# IDE specific files
+# Crawler state files
+*.pkl
+
+# Crawler data
+scraped_data/
+backup_*/
+
+# Logs
+*.log
+crawler_performance.png
+sentiment_analysis.png
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# IDE files
 .idea/
 .vscode/
 *.swp
-
-# Output files
-*.csv
-*.png
-*.html
-.DS_Store
+*.swo
