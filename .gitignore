@@ -1,0 +1,31 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# Crawler specific files
+*.pkl
+scraped_data/
+crawler_log.json
+crawler_detailed.log
+
+# IDE specific files
+.idea/
+.vscode/
+*.swp
+
+# Output files
+*.csv
+*.png
+*.html
+.DS_Store
