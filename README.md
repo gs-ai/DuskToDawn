@@ -22,7 +22,7 @@ A stealth web intelligence crawler that collects and analyzes mentions of specif
 
 1. Clone the repository
    ```
-   git clone https://github.com/yourusername/DuskToDawn.git
+   git clone https://github.com/gs-ai/DuskToDawn
    cd DuskToDawn
    ```
 
