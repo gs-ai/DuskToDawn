@@ -1,3 +1,5 @@
+![DuskToDawn Banner](495342cc-69a9-4716-8614-2edd59e53acc.png)
+
 # DuskToDawn Web Intelligence Crawler
 
 A stealth web intelligence crawler that collects and analyzes mentions of specific individuals across the internet. DuskToDawn uses advanced anonymity techniques through Tor integration to maintain operational security while gathering intelligence.
