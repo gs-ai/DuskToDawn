@@ -1,4 +1,4 @@
-![DuskToDawn Banner](495342cc-69a9-4716-8614-2edd59e53acc.png)
+![DuskToDawn Banner](11e5a2fd-cf9f-476e-b972-d9cdfef68d6b.png)
 
 # DuskToDawn Web Intelligence Crawler
 
