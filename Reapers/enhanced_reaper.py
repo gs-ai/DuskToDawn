@@ -410,24 +410,24 @@ class EnhancedStealthCrawler:
         for attempt in range(max_retries):
             try:
                 with socket.create_connection(('127.0.0.1', 9051), timeout=5) as ctrl_socket:
+                    # Try empty password authentication
                     ctrl_socket.sendall(b'AUTHENTICATE ""\r\n')
                     response = ctrl_socket.recv(1024)
                     if b'250' not in response:
-                        raise RuntimeError("Tor authentication failed")
-                    
+                        logger.warning("Tor authentication failed. Skipping circuit renewal.")
+                        return
                     ctrl_socket.sendall(b'SIGNAL NEWNYM\r\n')
                     response = ctrl_socket.recv(1024)
                     if b'250' not in response:
-                        raise RuntimeError("Tor circuit renewal failed")
-                    
+                        logger.warning("Tor circuit renewal failed. Skipping renewal.")
+                        return
                     time.sleep(random.uniform(1.0, 2.0))  # Wait for circuit change
                     logger.info("Tor circuit renewed successfully")
                     return
             except Exception as e:
                 if attempt == max_retries - 1:
-                    logger.error(f"Tor renewal failed: {str(e)}")
+                    logger.warning(f"Tor renewal failed: {str(e)}. Skipping renewal.")
                 time.sleep(2 ** attempt)
-        
         logger.warning("Could not renew Tor circuit - will continue with current IP")
 
     def setup_directories(self):
@@ -460,14 +460,8 @@ class EnhancedStealthCrawler:
             logger.error(f"Failed to save state: {str(e)}")
 
     def _check_robots_txt(self, url):
-        parsed = urlparse(url)
-        robots_url = f"{parsed.scheme}://{parsed.netloc}/robots.txt"
-        try:
-            response = self.regular_session.get(robots_url, timeout=5)
-            self.robots_parser.parse(response.text)
-            return self.robots_parser.is_allowed('*', url)
-        except Exception:
-            return True
+        # Always allow crawling, ignore robots.txt
+        return True
 
     def process_page(self, url):
         try:

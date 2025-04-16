@@ -23,3 +23,9 @@ colorama>=0.4.5
 
 # Optional: ML dependencies
 scikit-learn>=1.1.0
+
+# For compatibility and system operations
+python-dotenv
+
+# For Python <3.8, pickle5 is needed for some features
+pickle5; python_version<'3.8'

@@ -24,6 +24,7 @@ backup_*/
 *.log
 crawler_performance.png
 sentiment_analysis.png
+crawler_log.json
 
 # OS specific
 .DS_Store

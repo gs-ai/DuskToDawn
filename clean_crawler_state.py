@@ -10,7 +10,13 @@ def clean_state_files(backup=False, reset_logs=False):
     state_files = [
         'visited_urls.pkl',
         'queue.pkl',
-        'failed_urls.pkl'
+        'failed_urls.pkl',
+        'crawler_log.json',
+        'crawler_detailed.log',
+        'all_scraped_content.json'
+    ]
+    data_dirs = [
+        'scraped_data'
     ]
     
     # Create backup directory if needed
@@ -19,11 +25,10 @@ def clean_state_files(backup=False, reset_logs=False):
         os.makedirs(backup_dir, exist_ok=True)
         print(f"Creating backups in: {backup_dir}")
     
-    # Process state files
+    # Process state and log files
     for filename in state_files:
         if os.path.exists(filename):
             if backup:
-                # Create backup before deleting
                 backup_path = os.path.join(backup_dir, filename)
                 print(f"Backing up {filename} to {backup_path}")
                 try:
@@ -40,6 +45,26 @@ def clean_state_files(backup=False, reset_logs=False):
                 print(f"Error deleting {filename}: {e}")
         else:
             print(f"File not found: {filename}")
+    
+    # Process data directories
+    for dirname in data_dirs:
+        if os.path.exists(dirname):
+            if backup:
+                backup_path = os.path.join(backup_dir, dirname)
+                print(f"Backing up {dirname} to {backup_path}")
+                try:
+                    import shutil
+                    shutil.copytree(dirname, backup_path)
+                except Exception as e:
+                    print(f"Warning: Backup of {dirname} failed: {e}")
+            try:
+                import shutil
+                shutil.rmtree(dirname)
+                print(f"Deleted directory: {dirname}")
+            except Exception as e:
+                print(f"Error deleting directory {dirname}: {e}")
+        else:
+            print(f"Directory not found: {dirname}")
     
     # Handle log file if requested
     log_file = 'crawler_log.json'

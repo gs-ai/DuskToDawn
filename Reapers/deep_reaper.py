@@ -53,7 +53,6 @@ class StealthCrawler:
         self.setup_directories()
         self._verify_tor_connection()
         self._load_advanced_headers()
-        self._init_selenium_options()
 
     def _init_debug(self, message):
         debug_enabled = os.getenv('CRAWLER_DEBUG', 'false').lower() == 'true'
@@ -72,13 +71,6 @@ class StealthCrawler:
             'Pragma': 'no-cache',
             'Cache-Control': 'no-cache'
         }
-
-    def _init_selenium_options(self):
-        self.selenium_options = uc.ChromeOptions()
-        self.selenium_options.add_argument("--headless=new")
-        self.selenium_options.add_argument("--disable-blink-features=AutomationControlled")
-        self.selenium_options.add_argument(f"--window-size={random.randint(800,1600)},{random.randint(600,1200)}")
-        self.selenium_options.set_capability("goog:loggingPrefs", {'performance': 'ALL'})
 
     def _verify_tor_connection(self):
         try:
@@ -111,16 +103,18 @@ class StealthCrawler:
         for attempt in range(max_retries):
             try:
                 with socket.create_connection(('127.0.0.1', 9051), timeout=5) as ctrl_socket:
+                    # Try empty password authentication
                     ctrl_socket.sendall(b'AUTHENTICATE ""\r\n')
                     response = ctrl_socket.recv(1024)
                     if b'250' not in response:
-                        raise RuntimeError("Tor authentication failed")
-                    
+                        # If authentication fails, skip renewal and warn
+                        print("[WARNING] Tor authentication failed. Skipping circuit renewal.")
+                        return
                     ctrl_socket.sendall(b'SIGNAL NEWNYM\r\n')
                     response = ctrl_socket.recv(1024)
                     if b'250' not in response:
-                        raise RuntimeError("Tor circuit renewal failed")
-                    
+                        print("[WARNING] Tor circuit renewal failed. Skipping renewal.")
+                        return
                     old_ip = self.session.get('https://api.ipify.org').text
                     new_ip = self.session.get('https://api.ipify.org').text
                     if old_ip == new_ip:
@@ -128,7 +122,7 @@ class StealthCrawler:
                     return
             except Exception as e:
                 if attempt == max_retries - 1:
-                    self._emergency_shutdown(f"Tor renewal failed: {str(e)}")
+                    print(f"[WARNING] Tor renewal failed: {str(e)}. Skipping renewal.")
                 time.sleep(2 ** attempt)
 
     def setup_directories(self):
@@ -158,14 +152,8 @@ class StealthCrawler:
             print(f"[ERROR] Failed to save state: {str(e)}")
 
     def _check_robots_txt(self, url):
-        parsed = urlparse(url)
-        robots_url = f"{parsed.scheme}://{parsed.netloc}/robots.txt"
-        try:
-            response = self.session.get(robots_url, timeout=5)
-            self.robots_parser.parse(response.text)
-            return self.robots_parser.is_allowed('*', url)
-        except Exception:
-            return True
+        # Always allow crawling, ignore robots.txt
+        return True
 
     def process_page(self, url):
         try:
@@ -216,7 +204,13 @@ class StealthCrawler:
         return response.content
 
     def _fetch_selenium(self, url):
-        driver = uc.Chrome(options=self.selenium_options)
+        # Always create a fresh ChromeOptions object
+        options = uc.ChromeOptions()
+        options.add_argument("--headless=new")
+        options.add_argument("--disable-blink-features=AutomationControlled")
+        options.add_argument(f"--window-size={random.randint(800,1600)},{random.randint(600,1200)}")
+        options.set_capability("goog:loggingPrefs", {'performance': 'ALL'})
+        driver = uc.Chrome(options=options)
         try:
             driver.execute_cdp_cmd('Network.setUserAgentOverride', {
                 "userAgent": self.ua.random,
@@ -276,7 +270,10 @@ class StealthCrawler:
         filename = f"{hash(url)}_{int(time.time())}.html.gz"
         path = os.path.join(self.data_dir, filename)
         with gzip.open(path, 'wb') as f:
-            f.write(content.encode('utf-8'))
+            if isinstance(content, str):
+                f.write(content.encode('utf-8'))
+            else:
+                f.write(content)
 
     def _enqueue_links(self, soup, base_url):
         with self.lock:
@@ -327,7 +324,11 @@ class StealthCrawler:
         name = input("Enter target name (first last): ").strip()
         first, last = name.split()[:2]
         self.name_variations = self._generate_name_variations(first, last)
-        self.queue.append(input("Enter seed URL: ").strip())
+        seed_url = input("Enter seed URL: ").strip()
+        # Allow user to enter URL without scheme (e.g., someurl.com)
+        if not seed_url.startswith("http://") and not seed_url.startswith("https://"):
+            seed_url = "https://" + seed_url
+        self.queue.append(seed_url)
         # Add domain-specific variations
         self.name_variations.extend([
             f"{first}@company.com",

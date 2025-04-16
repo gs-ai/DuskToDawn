@@ -6,7 +6,7 @@ import time
 import socket
 import argparse
 import requests
-import json
+import jsonpython3 Reapers/run_reaper.py
 import random
 from stem import Signal
 from stem.control import Controller

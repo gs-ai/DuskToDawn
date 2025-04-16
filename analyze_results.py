@@ -34,10 +34,13 @@ class ResultAnalyzer:
                 for line in f:
                     try:
                         entry = json.loads(line.strip())
-                        self.entries.append(entry)
+                        if isinstance(entry, dict):
+                            self.entries.append(entry)
+                        else:
+                            # Skip non-dict entries (e.g., lists)
+                            continue
                     except json.JSONDecodeError:
                         continue
-                        
             print(f"{Fore.GREEN}Successfully loaded {len(self.entries)} entries.{Style.RESET_ALL}")
         except Exception as e:
             print(f"{Fore.RED}Error loading log file: {str(e)}{Style.RESET_ALL}")

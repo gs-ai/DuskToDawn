@@ -25,12 +25,12 @@ def main():
     
     if args.enhanced:
         print("Using enhanced stealth crawler with advanced anti-detection...")
-        run_script = 'enhanced_reaper.py'
+        run_script = os.path.join(os.path.dirname(__file__), 'enhanced_reaper.py')
     else:
         print("Using standard crawler...")
-        run_script = 'deep_reaper.py'
+        run_script = os.path.join(os.path.dirname(__file__), 'deep_reaper.py')
     
-    print(f"Starting {run_script}...")
+    print(f"Starting {os.path.basename(run_script)}...")
     time.sleep(1)
     
     try:

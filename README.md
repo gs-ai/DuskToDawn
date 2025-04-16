@@ -2,7 +2,11 @@
 
 # DuskToDawn Web Intelligence Crawler
 
-A stealth web intelligence crawler that collects and analyzes mentions of specific individuals across the internet. DuskToDawn uses advanced anonymity techniques through Tor integration to maintain operational security while gathering intelligence.
+[![Python](https://img.shields.io/badge/Python-3.7%2B-blue?logo=python)](https://www.python.org/) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
+A professional, stealth web intelligence crawler that collects and analyzes mentions of specific individuals across the internet. DuskToDawn uses advanced anonymity techniques through Tor integration to maintain operational security while gathering intelligence.
+
+---
 
 ## Features
 
@@ -13,37 +17,42 @@ A stealth web intelligence crawler that collects and analyzes mentions of specif
 - **State Persistence**: Maintains crawler state between sessions
 - **Data Analysis Tools**: Visualize and export findings
 
+---
+
 ## Installation
 
 ### Prerequisites
 
 - Python 3.7+
+- Conda (Anaconda or Miniconda)
 - Tor service installed and running on default ports (9050/9051)
 
 ### Setup
 
 1. Clone the repository
-   ```
+   ```sh
    git clone https://github.com/gs-ai/DuskToDawn
    cd DuskToDawn
    ```
 
-2. Create and activate a virtual environment
-   ```
-   python -m venv reaperENV
-   source reaperENV/bin/activate  # On Windows: reaperENV\Scripts\activate
+2. Create and activate a conda environment
+   ```sh
+   conda create -n reaperENV python=3.11
+   conda activate reaperENV
    ```
 
 3. Install dependencies
-   ```
+   ```sh
    pip install -r requirements.txt
    ```
 
 4. Ensure Tor is running
-   ```
+   ```sh
    # Check Tor connectivity
    python tor_manager.py --test
    ```
+
+---
 
 ## Usage
 
@@ -53,13 +62,13 @@ Run the crawler with:
 
 ```bash
 # Standard mode
-python run_reaper.py
+python Reapers/run_reaper.py
 
 # Enhanced stealth mode (better for sites with anti-bot protection)
-python run_reaper.py --enhanced
+python Reapers/run_reaper.py --enhanced
 
 # With debug output
-python run_reaper.py --debug
+python Reapers/run_reaper.py --debug
 ```
 
 ### Input Parameters
@@ -92,35 +101,27 @@ Starting crawler with 3 seed URLs
 Looking for mentions of: Elon Musk, Musk, Elon and 13 other variations
 ```
 
-## Features
+---
 
-- **Multiple Crawler Modes**
-  - Standard: Balanced approach suitable for most websites
-  - Enhanced: More sophisticated anti-detection techniques for harder targets
+## Project Structure
 
-- **Anti-Detection Capabilities**
-  - Browser fingerprinting evasion
-  - Multiple access strategies with automatic fallback
-  - Random user agent rotation
-  - Realistic human-like browsing patterns
-  - Automatic Cloudflare/CAPTCHA detection
+```
+DuskToDawn/
+├── Reapers/
+│   ├── deep_reaper.py
+│   ├── enhanced_reaper.py
+│   └── run_reaper.py
+├── utils/
+│   ├── cleanup.py
+│   └── log_analyzer.py
+├── analyze_results.py
+├── tor_manager.py
+├── requirements.txt
+├── README.md
+└── ...
+```
 
-- **Anonymity**
-  - Automatic Tor circuit rotation
-  - IP address verification
-  - Control port management
-
-- **Content Analysis**
-  - Advanced name variation generation
-  - Context extraction around name mentions
-  - Sentiment analysis of discovered content
-
-- **Robustness**
-  - Resource leak prevention
-  - Persistent crawl state (can be resumed)
-  - Graceful error handling and shutdown
-  - Respects robots.txt protocols
-  - Adaptive rate limiting
+---
 
 ## Output Files
 
@@ -130,6 +131,8 @@ Looking for mentions of: Elon Musk, Musk, Elon and 13 other variations
 - **visited_urls.pkl**: Pickle file with all visited URLs (for resuming crawls)
 - **queue.pkl**: Pickle file with URLs queued for crawling
 - **failed_urls.pkl**: Pickle file with URLs that failed to be processed
+
+---
 
 ## Analyzing Results
 
@@ -151,11 +154,7 @@ python analyze_results.py --csv
 python analyze_results.py --viz
 ```
 
-The analyzer will:
-1. Show a summary of all detected mentions
-2. Display detailed context around each mention
-3. Generate sentiment analysis statistics
-4. Create visualizations of domain distribution and sentiment
+---
 
 ## Tor Management
 
@@ -172,6 +171,8 @@ python tor_manager.py --renew
 python tor_manager.py --monitor 5 --delay 30
 ```
 
+---
+
 ## Troubleshooting
 
 If you encounter issues, check the TROUBLESHOOTING.md file for solutions to common problems.
@@ -183,6 +184,8 @@ Common issues:
 - Resource leaks on shutdown
 - Memory usage issues
 
+---
+
 ## Security Considerations
 
 - **Legal Compliance**: Always ensure you're operating within legal boundaries and have proper authorization.
@@ -190,6 +193,8 @@ Common issues:
 - **Data Protection**: Be mindful of storing and processing any sensitive information.
 - **Network Security**: Using Tor provides anonymity but isn't a guarantee of complete security.
 - **Attribution Risks**: Even with precautions, sophisticated targets might detect crawling activity.
+
+---
 
 ## Advanced Configuration
 
@@ -200,16 +205,48 @@ For advanced users, both crawler implementations (`deep_reaper.py` and `enhanced
 - Implement additional stealth techniques
 - Extend content analysis capabilities
 
-## Project Structure
+---
 
-- **deep_reaper.py**: Standard crawler implementation
-- **enhanced_reaper.py**: Advanced crawler with better anti-detection features
-- **run_reaper.py**: Launcher script to start either crawler
-- **tor_manager.py**: Tor connection testing and management
-- **analyze_results.py**: Tool for analyzing crawler findings
-- **utils/cleanup.py**: Resource management utilities
-- **requirements.txt**: Python dependencies
-- **TROUBLESHOOTING.md**: Additional help for common issues
+# DuskToDawn Program Overview
+
+This project contains several Python programs and modules for web intelligence crawling, data collection, and analysis. Below is a summary of what each main program does:
+
+## Main Programs
+
+- **clean_crawler_state.py**
+  - Cleans all crawler state, log, and data files/directories. Optionally creates backups before deleting. Use this to reset the crawler for a fresh start.
+
+- **combine_scraped_data.py**
+  - Combines all scraped HTML data (from `scraped_data/`) and matches it with crawler state from `.pkl` files. Outputs a single searchable JSON file (`all_scraped_content.json`) containing the text and status of each page.
+
+- **analyze_results.py**
+  - Loads and analyzes crawler results from `crawler_log.json`. Summarizes findings, shows detailed mentions, exports to CSV, and creates visualizations of the data.
+
+- **tor_manager.py**
+  - Utility for managing and testing Tor connectivity. Can check Tor status, renew circuits, and monitor IP changes.
+
+## Crawler Programs (in `Reapers/`)
+
+- **run_reaper.py**
+  - Main entry point for running the crawler. Launches either the standard or enhanced crawler, checks Tor, and manages execution.
+
+- **deep_reaper.py**
+  - Standard crawler implementation. Crawls the web, collects mentions of target names/keywords, and logs results. Uses Tor for anonymity.
+
+- **enhanced_reaper.py**
+  - Advanced crawler with enhanced anti-detection and stealth features. Supports more sophisticated crawling and evasion techniques.
+
+## Utilities (in `utils/`)
+
+- **cleanup.py**
+  - Resource management and cleanup utilities for safe shutdown and resource release.
+
+- **log_analyzer.py**
+  - Analyzes detailed crawler logs for performance, errors, and strategy usage. Generates statistics and charts from `crawler_detailed.log`.
+
+---
+
+For more details on usage, see the individual script docstrings or run each script with `--help`.
 
 ## License & Usage
 
